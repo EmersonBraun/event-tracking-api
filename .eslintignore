@@ -1,0 +1,4 @@
+.docker
+coverage
+dist
+node_modules
