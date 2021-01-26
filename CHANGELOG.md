@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/EmersonBraun/event_tracking/compare/v0.6.0...v0.7.0) (2021-01-26)
+
+
+### Features
+
+* create module user ([24ea40a](https://github.com/EmersonBraun/event_tracking/commit/24ea40a4e34f502204324d115e2fe171a0c13adf))
+
 ## [0.6.0](https://github.com/EmersonBraun/event_tracking/compare/v0.5.0...v0.6.0) (2021-01-26)
 
 
