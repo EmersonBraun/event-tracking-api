@@ -1,37 +1,36 @@
-import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
 import { Model } from 'mongoose';
-import { CreateLogDto } from '../dtos/create.dto';
-// import { UpdateLogDto } from '../dtos/update.dto';
-import { Log, LogDocument } from '../schema/log.schema';
+import { UpdateEventDto } from '../dtos';
+import { CreateEventDto } from '../dtos/create.dto';
+// import { UpdateEventDto } from '../dtos/update.dto';
+import { Event, EventDocument } from '../schema/event.schema';
 
 export interface AuthRequest extends Request {
   user?: string
 }
-@Injectable({ scope: Scope.REQUEST })
-export class LogService {
+@Injectable()
+export class EventService {
   constructor(
-    @InjectModel(Log.name)
-    private repository: Model<LogDocument>,
-    @Inject(REQUEST) private request: Request
+    @InjectModel(Event.name)
+    private repository: Model<EventDocument>,
   ) {}
 
-  async findAll(): Promise<Log[]> {
+  async findAll(): Promise<Event[]> {
     return await this.repository.find().exec()
   }
 
-  async search(data: CreateLogDto): Promise<Log[]> {
+  async search(data: CreateEventDto): Promise<Event[]> {
     return await this.repository.find({ ...data });
   }
 
-  async create(data: any): Promise<Log> {
-    const { user } = this.request
-    return await this.repository.create({...data, user});
+  async create(data: any): Promise<Event> {
+
+    return await this.repository.create(data);
   }
 
-  async findById(id: string): Promise<Log> {
+  async findById(id: string): Promise<Event> {
     const registry = await this.repository.findById(id).exec();
 
     if (!registry) {
@@ -41,11 +40,11 @@ export class LogService {
     return registry;
   }
 
-  // async update(id: string, data: UpdateLogDto): Promise<Log> {
-  //   return await this.repository.findOneAndUpdate({ _id: id }, { ...data }, { new: true }).exec();
-  // }
+  async update(id: string, data: UpdateEventDto): Promise<Event> {
+    return await this.repository.findOneAndUpdate({ _id: id }, { ...data }, { new: true }).exec();
+  }
 
-  // async delete(id: string): Promise<void> {
-  //   await this.repository.findOneAndDelete({ _id: id }).exec();
-  // }
+  async delete(id: string): Promise<void> {
+    await this.repository.findOneAndDelete({ _id: id }).exec();
+  }
 }

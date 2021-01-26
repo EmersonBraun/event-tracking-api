@@ -1,16 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Any } from 'typeorm';
 
-export type LogDocument = Log & Document; 
+export type EventDocument = Event & Document; 
 
 @Schema({timestamps: true})
-export class Log {
-  @Prop() module: string
-  @Prop() action: string
-  @Prop([Any]) user: any
-  @Prop([Any]) data: any
-  @Prop([Any]) old: any
-
+export class Event {
+  @Prop() name: string
+  @Prop() type: string
+  @Prop() ip: string
 }
-export const LogSchema = SchemaFactory.createForClass(Log)
+export const EventSchema = SchemaFactory.createForClass(Event)

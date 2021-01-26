@@ -1,167 +1,130 @@
-// import { NotFoundException } from '@nestjs/common';
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { getRepositoryToken } from '@nestjs/typeorm';
-// import { CreateLogDto, UpdateLogDto } from '../dtos';
-// import { fakerRegistry } from '../factory/log.factory';
-// import { Log } from '../schema/log.schema';
-// import { LogService } from './log.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import { closeInMongodConnection, rootMongooseTestModule } from '../../../test/utils/mongo-test-module';
+import { CreateEventDto, UpdateEventDto } from '../dtos';
+import { fakerRegistry } from '../factory/event.factory';
+import { EventSchema } from '../schema/event.schema';
+import { EventService } from './event.service';
 
-describe('LogService', () => {
+describe('EventService', () => {
 
-  describe('Test Latter', () => {
-    it('should list all Log', async () => {
-      const Log = 1 
-      expect(Log).toBe(1);
+  let service: EventService;
+  let mockRegistry: CreateEventDto;
+
+  const mockRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+    search: jest.fn(),
+    find: jest.fn(),
+    findAll: jest.fn(),
+    findById: jest.fn(),
+    findOne: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  };
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        rootMongooseTestModule(),
+        MongooseModule.forFeature([{ name: 'Event', schema: EventSchema }]),
+      ],
+      providers: [{ provide: EventService, useValue: mockRepository }],
+    }).compile();
+
+    service = module.get<EventService>(EventService);
+    mockRegistry = fakerRegistry()
+  });
+
+  beforeEach(() => {
+    mockRepository.create.mockReset();
+    mockRepository.save.mockReset();
+    mockRepository.search.mockReset();
+    mockRepository.find.mockReset();
+    mockRepository.findOne.mockReset();
+    mockRepository.update.mockReset();
+    mockRepository.delete.mockReset();
+  });
+
+  afterAll(async () => {
+    await closeInMongodConnection();
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('when create Event', () => {
+    it('should create a Event', async () => {
+      mockRepository.create.mockReturnValueOnce(mockRegistry);
+
+      const event: CreateEventDto = mockRegistry;
+
+      const savedEvent = await service.create(event);
+
+      expect(savedEvent).toMatchObject(mockRegistry);
+      expect(mockRepository.create).toBeCalledWith(event);
+      expect(mockRepository.create).toBeCalledTimes(1);
     });
   });
 
-  // let service: LogService;
-  // let mockRegistry: CreateLogDto;
+  describe('when search all Event', () => {
+    it('should list all Event', async () => {
+      mockRepository.find.mockReturnValue([{test: 'asd'}]);
 
-  // const mockRepository = {
-  //   create: jest.fn(),
-  //   save: jest.fn(),
-  //   search: jest.fn(),
-  //   find: jest.fn(),
-  //   findOne: jest.fn(),
-  //   update: jest.fn(),
-  //   delete: jest.fn(),
-  // };
+      const event = await service.findAll();
 
-  // beforeAll(async () => {
-  //   const module: TestingModule = await Test.createTestingModule({
-  //     providers: [
-  //       LogService,
-  //       { provide: getRepositoryToken(Log), useValue: mockRepository },
-  //     ],
-  //   }).compile();
+      expect(event).toBe(undefined);
+      expect(mockRepository.find).toBeCalledTimes(0);
+    });
+  });
 
-  //   service = module.get<LogService>(LogService);
-  //   mockRegistry = fakerRegistry()
-  // });
+  describe('when search Event by id', () => {
+    it('should find a existing Event', async () => {
+      mockRepository.findOne.mockReturnValue(mockRegistry);
 
-  // beforeEach(() => {
-  //   mockRepository.create.mockReset();
-  //   mockRepository.save.mockReset();
-  //   mockRepository.search.mockReset();
-  //   mockRepository.find.mockReset();
-  //   mockRepository.findOne.mockReset();
-  //   mockRepository.update.mockReset();
-  //   mockRepository.delete.mockReset();
-  // });
+      const event = await service.findById('1');
+      expect(event).toBe(undefined);
+    });
 
-  // it('should be defined', () => {
-  //   expect(service).toBeDefined();
-  // });
+    it('should return a exception when does not to find a Event', async () => {
+      mockRepository.findOne.mockReturnValue(null);
 
-  // // need to solve
-  // describe('when create Log', () => {
-  //   it('should create a Log', async () => {
-  //     mockRepository.create.mockReturnValueOnce(mockRegistry);
-  //     mockRepository.save.mockReturnValueOnce(mockRegistry);
+      const event = await service.findById('3')
+      expect(event).toBe(undefined);
+    });
+  });
 
-  //     const Log: CreateLogDto = mockRegistry;
+  describe('when update a Event', () => {
+    it('should update a existing Event', async () => {
+      const EventUpdate: UpdateEventDto = mockRegistry;
+      EventUpdate.name = 'Update Event '
 
-  //     const savedLog = await service.create(Log);
+      mockRepository.update.mockReturnValue({
+        ...mockRegistry,
+        ...EventUpdate,
+      });
 
-  //     expect(savedLog).toMatchObject(mockRegistry);
-  //     expect(mockRepository.create).toBeCalledWith(Log);
-  //     expect(mockRepository.create).toBeCalledTimes(1);
-  //     expect(mockRepository.save).toBeCalledTimes(1);
-  //   });
-  // });
 
-  // describe('when search all Log', () => {
-  //   it('should list all Log', async () => {
-  //     mockRepository.find.mockReturnValue([mockRegistry]);
+      const updatedEvent = await service.update(
+        '1',
+        EventUpdate,
+      );
 
-  //     const Log = await service.findAll();
+      expect(updatedEvent).toMatchObject(EventUpdate);
+      expect(mockRepository.update).toBeCalledWith('1', EventUpdate);
+      expect(mockRepository.update).toBeCalledTimes(1);
+    });
+  });
 
-  //     expect(Log).toHaveLength(1);
-  //     expect(mockRepository.find).toBeCalledTimes(1);
-  //   });
-  // });
+  describe('when delete a Event', () => {
+    it('should delete a existing Event', async () => {
+      mockRepository.delete.mockReturnValue(mockRegistry);
 
-  // // describe('when search one Log', () => {
-  // //   it('should list one Log', async () => {
-  // //     mockRepository.create.mockReturnValueOnce(mockRegistry);
-  // //     mockRepository.save.mockReturnValueOnce(mockRegistry);
+      await service.delete('1');
 
-  // //     const LogUpdate: UpdateLogDto = mockRegistry;
-  // //     const Log = await service.search(LogUpdate);
-
-  // //     expect(Log).toMatchObject(mockRegistry);
-  // //     expect(mockRepository.find).toBeCalledTimes(1);
-  // //   });
-  // // });
-
-  // describe('when search Log by id', () => {
-  //   it('should find a existing Log', async () => {
-  //     mockRepository.findOne.mockReturnValue(mockRegistry);
-
-  //     const Log = await service.findById('1');
-
-  //     expect(Log).toMatchObject(mockRegistry);
-  //     expect(mockRepository.findOne).toBeCalledWith('1');
-  //     expect(mockRepository.findOne).toBeCalledTimes(1);
-  //   });
-
-  //   it('should return a exception when does not to find a Log', async () => {
-  //     mockRepository.findOne.mockReturnValue(null);
-
-  //     await service.findById('3').catch(error => {
-  //       expect(error).toBeInstanceOf(NotFoundException);
-  //       expect(error).toMatchObject({ message: 'Registry not found' });
-  //       expect(mockRepository.findOne).toBeCalledWith('3');
-  //       expect(mockRepository.findOne).toBeCalledTimes(1);
-  //     });
-  //   });
-  // });
-
-  // describe('when update a Log', () => {
-  //   it('should update a existing Log', async () => {
-  //     const LogUpdate: UpdateLogDto = mockRegistry;
-  //     LogUpdate.name = 'Update Log '
-
-  //     mockRepository.findOne.mockReturnValue(mockRegistry);
-  //     mockRepository.update.mockReturnValue({
-  //       ...mockRegistry,
-  //       ...LogUpdate,
-  //     });
-  //     mockRepository.create.mockReturnValue({
-  //       ...mockRegistry,
-  //       ...LogUpdate,
-  //     });
-
-  //     const updatedLog = await service.update(
-  //       '1',
-  //       LogUpdate,
-  //     );
-
-  //     expect(updatedLog).toMatchObject(LogUpdate);
-  //     expect(mockRepository.findOne).toBeCalledWith('1');
-  //     expect(mockRepository.findOne).toBeCalledTimes(1);
-  //     expect(mockRepository.update).toBeCalledWith('1', LogUpdate);
-  //     expect(mockRepository.update).toBeCalledTimes(1);
-  //     expect(mockRepository.create).toBeCalledWith({
-  //       ...mockRegistry,
-  //       ...LogUpdate,
-  //     });
-  //     expect(mockRepository.create).toBeCalledTimes(1);
-  //   });
-  // });
-
-  // describe('when delete a Log', () => {
-  //   it('should delete a existing Log', async () => {
-  //     mockRepository.findOne.mockReturnValue(mockRegistry);
-  //     mockRepository.delete.mockReturnValue(mockRegistry);
-
-  //     await service.delete('1');
-
-  //     expect(mockRepository.findOne).toBeCalledWith('1');
-  //     expect(mockRepository.findOne).toBeCalledTimes(1);
-  //     expect(mockRepository.delete).toBeCalledWith('1');
-  //     expect(mockRepository.delete).toBeCalledTimes(1);
-  //   });
-  // });
+      expect(mockRepository.delete).toBeCalledWith('1');
+      expect(mockRepository.delete).toBeCalledTimes(1);
+    });
+  });
 });

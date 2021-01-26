@@ -1,12 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsOptional, IsString
-} from 'class-validator';
+import { IsString } from 'class-validator';
 
-export class UpdateLogDto {
-  @IsString() @ApiProperty() module: string
-  @IsString() @ApiProperty() action: string
-  @IsOptional() @ApiProperty() user?: any
-  @IsOptional() @ApiProperty() data: any
-  @IsOptional() @ApiProperty() old?: any
+export class UpdateEventDto {
+  @IsString() @ApiProperty() name: string
+  @IsString() @ApiProperty() type: string
+  @IsString() @ApiProperty() ip: string
 }

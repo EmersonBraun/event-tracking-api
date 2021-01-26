@@ -1,119 +1,94 @@
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { CreateLogDto, UpdateLogDto } from '../dtos';
-// import { fakerRegistry } from '../factory/log.factory';
-// import { LogService } from '../service/log.service';
-// import { LogController } from './log.controller';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import { closeInMongodConnection, rootMongooseTestModule } from '../../../test/utils/mongo-test-module';
+import { CreateEventDto } from '../dtos';
+import { fakerRegistry } from '../factory/event.factory';
+import { EventSchema } from '../schema/event.schema';
+import { EventService } from '../service/event.service';
+import { EventController } from './event.controller';
 
-describe('LogController', () => {
-  describe('Test Latter', () => {
-    it('should list all Log', async () => {
-      const Log = 1 
-      expect(Log).toBe(1);
+describe('EventController', () => {
+
+  let controller: EventController;
+  let mockRegistry: CreateEventDto;
+
+  const mockService = {
+    create: jest.fn(),
+    findAll: jest.fn(),
+    search: jest.fn(),
+    findById: jest.fn(),
+    // update: jest.fn(),
+    // delete: jest.fn(),
+  };
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        rootMongooseTestModule(),
+        MongooseModule.forFeature([{ name: 'Event', schema: EventSchema }]),
+      ],
+      controllers: [EventController],
+      providers: [{ provide: EventService, useValue: mockService }],
+    }).compile();
+
+    controller = module.get<EventController>(EventController);
+    mockRegistry = fakerRegistry()
+  });
+
+  beforeEach(() => {
+    mockService.create.mockReset();
+    mockService.findAll.mockReset();
+    mockService.search.mockReset();
+    mockService.findById.mockReset();
+    // mockService.update.mockReset();
+    // mockService.delete.mockReset();
+  });
+  
+  afterAll(async () => {
+    await closeInMongodConnection();
+  });
+  
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+
+  describe('when create Event', () => {
+    it('should create a Event and return it', async () => {
+      mockService.create.mockReturnValue(mockRegistry);
+
+      const event: CreateEventDto = mockRegistry;
+
+      const createdEvent = await controller.create(event);
+
+      expect(createdEvent).toMatchObject(mockRegistry);
+      expect(mockService.create).toBeCalledWith(event);
+      expect(mockService.create).toBeCalledTimes(1);
     });
   });
-//   let controller: LogController;
-//   let mockRegistry: CreateLogDto;
 
-//   const mockService = {
-//     create: jest.fn(),
-//     findAll: jest.fn(),
-//     search: jest.fn(),
-//     findById: jest.fn(),
-//     update: jest.fn(),
-//     delete: jest.fn(),
-//   };
+  describe('when search all Event', () => {
+    it('should search all Event and return them', async () => {
+      mockService.findAll.mockReturnValue([mockRegistry]);
 
-//   beforeAll(async () => {
-//     const module: TestingModule = await Test.createTestingModule({
-//       controllers: [LogController],
-//       providers: [{ provide: LogService, useValue: mockService }],
-//     }).compile();
+      const event = await controller.findAll();
 
-//     controller = module.get<LogController>(LogController);
-//     mockRegistry = fakerRegistry()
-//   });
+      expect(event).toHaveLength(1);
+      expect(event).toMatchObject([mockRegistry]);
+      expect(mockService.findAll).toBeCalledTimes(1);
+    });
+  });
 
-//   beforeEach(() => {
-//     mockService.create.mockReset();
-//     mockService.findAll.mockReset();
-//     mockService.search.mockReset();
-//     mockService.findById.mockReset();
-//     mockService.update.mockReset();
-//     mockService.delete.mockReset();
-//   });
+  describe('when search Event by id', () => {
+    it('should find a existing Event and return it', async () => {
+      mockService.findById.mockReturnValue(mockRegistry);
 
-//   it('should be defined', () => {
-//     expect(controller).toBeDefined();
-//   });
+      const event = await controller.findById('1');
 
-//   describe('when create log', () => {
-//     it('should create a log and return it', async () => {
-//       mockService.create.mockReturnValue(mockRegistry);
+      expect(event).toMatchObject(mockRegistry);
+      expect(mockService.findById).toBeCalledWith('1');
+      expect(mockService.findById).toBeCalledTimes(1);
+    });
+  });
 
-//       const log: CreateLogDto = mockRegistry;
-
-//       const createdlog = await controller.create('file',log);
-
-//       expect(createdlog).toMatchObject(mockRegistry);
-//       expect(mockService.create).toBeCalledWith(log);
-//       expect(mockService.create).toBeCalledTimes(1);
-//     });
-//   });
-
-//   describe('when search all log', () => {
-//     it('should search all log and return them', async () => {
-//       mockService.findAll.mockReturnValue([mockRegistry]);
-
-//       const log = await controller.findAll();
-
-//       expect(log).toHaveLength(1);
-//       expect(log).toMatchObject([mockRegistry]);
-//       expect(mockService.findAll).toBeCalledTimes(1);
-//     });
-//   });
-
-//   describe('when search log by id', () => {
-//     it('should find a existing log and return it', async () => {
-//       mockService.findById.mockReturnValue(mockRegistry);
-
-//       const log = await controller.findById('1');
-
-//       expect(log).toMatchObject(mockRegistry);
-//       expect(mockService.findById).toBeCalledWith('1');
-//       expect(mockService.findById).toBeCalledTimes(1);
-//     });
-//   });
-
-//   describe('when update a log', () => {
-//     it('should update a existing log and return it', async () => {
-//       const logUpdate: UpdateLogDto = mockRegistry;
-//       logUpdate.name = 'Update log '
-
-//       mockService.update.mockReturnValue({
-//         ...mockRegistry,
-//         ...logUpdate,
-//       });
-
-//       const updatedlog = await controller.update(
-//         '1',
-//         logUpdate,
-//       );
-
-//       expect(updatedlog).toMatchObject(logUpdate);
-//       expect(mockService.update).toBeCalledWith(
-//         '1',
-//         logUpdate,
-//       );
-//       expect(mockService.update).toBeCalledTimes(1);
-//     });
-//   });
-
-//   describe('when delete a log', () => {
-//     it('should delete a existing log', async () => {
-//       await controller.delete('1');
-
-//       expect(mockService.delete).toBeCalledWith('1');
-//       expect(mockService.delete).toBeCalledTimes(1);
-//     });
-//   });
 });
