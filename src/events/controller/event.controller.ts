@@ -47,15 +47,6 @@ export class EventController {
     return await this.service.create(data);
   }
 
-  @Post('search')
-  @HttpCode(200)
-  @UseGuards(JwtAuthGuard) 
-  @ApiOperation({ summary: 'Search Event' })
-  @ApiCreatedResponse({ type: UpdateEventDto, description: 'Searched Event' })
-  @ApiBadRequestResponse({ type: ErrorResponse, description: 'Bad Request', })
-  async search(@Body() data: CreateEventDto): Promise<Event[]> {
-    return await this.service.search(data);
-  }
 
   @Get(':id')
   @HttpCode(200)

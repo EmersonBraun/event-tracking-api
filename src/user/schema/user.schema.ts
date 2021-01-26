@@ -1,0 +1,23 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+export type UserDocument = User & Document; 
+
+@Schema({timestamps: true})
+export class User {
+  @Prop() name: string
+  @Prop() email: string
+  @Prop() password: string
+}
+export const UserSchema = SchemaFactory.createForClass(User)
+
+// UserSchema.pre<Document<User>>('save', (next) => {
+//   try {
+//     this.password = bcrypt.hash(this.password, 10);  
+//     next(); 
+//   } catch (error) {
+//     return next(error);
+//   }
+// });
+
+  

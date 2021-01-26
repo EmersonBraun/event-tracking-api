@@ -1,15 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Request } from 'express';
 import { Model } from 'mongoose';
 import { UpdateEventDto } from '../dtos';
 import { CreateEventDto } from '../dtos/create.dto';
 // import { UpdateEventDto } from '../dtos/update.dto';
 import { Event, EventDocument } from '../schema/event.schema';
 
-export interface AuthRequest extends Request {
-  user?: string
-}
 @Injectable()
 export class EventService {
   constructor(
