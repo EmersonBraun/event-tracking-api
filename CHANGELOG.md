@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/EmersonBraun/event_tracking/compare/v0.7.0...v0.8.0) (2021-01-27)
+
+
+### Bug Fixes
+
+* solve typescript errors ([dddec3d](https://github.com/EmersonBraun/event_tracking/commit/dddec3d64b7b0436f4b22728f8efeebae67557dc))
+
 ## [0.7.0](https://github.com/EmersonBraun/event_tracking/compare/v0.6.0...v0.7.0) (2021-01-26)
 
 
