@@ -5,6 +5,7 @@ import { Options } from './types';
 
 
 export function getIcon(options: Options): string {
+  console.log(chalk)
   const selectedIcon = options.icon || 'tick'
   if (options.iconColor && options.iconUnderlined) {
     return `${chalk.underline[options.iconColor](figures[selectedIcon])}`

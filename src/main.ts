@@ -4,11 +4,11 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
-import { PrettyLogger } from './common/logger/pretty-log';
 import { setupDocumentation } from './config/documentation.config';
 
+const documentationRoute = 'documentation'
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { logger: console });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {});
 
   app.use(helmet())
   app.use(
@@ -17,10 +17,12 @@ async function bootstrap() {
       max: 1000,
     }),
   )
-  app.useLogger(new PrettyLogger);
   app.useGlobalPipes(new ValidationPipe({ transform: true,})); 
-  void setupDocumentation(app)
-  await app.listen(process.env.APP_PORT);
-  console.log(`🚀 ${String(process.env.APP_NAME)} (API) is running on: http://localhost:${process.env.APP_PORT}`);
+ 
+  void setupDocumentation(app, 'documentation')
+  const appName = process.env.APP_NAME ?? 'Event Tracking'
+  const port = process.env.APP_PORT ?? 3333
+  await app.listen(port);
+  console.log(`🚀 ${String(appName)} \n (API) is running on: http://localhost:${String(port)} \n (DOCUMENTATION) is running on: http://localhost:${String(port)}/${String(documentationRoute)}`);
 }
 bootstrap();

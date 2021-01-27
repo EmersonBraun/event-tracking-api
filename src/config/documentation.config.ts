@@ -8,7 +8,7 @@ const documentationOptions = new DocumentBuilder()
     .setVersion(version)
     .build();
 
-export function setupDocumentation (app: INestApplication) {
+export function setupDocumentation (app: INestApplication, routeName) {
     const document = SwaggerModule.createDocument(app, documentationOptions);
-    SwaggerModule.setup('documentation', app, document);
+    SwaggerModule.setup(routeName, app, document);
 }
