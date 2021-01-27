@@ -1,8 +1,8 @@
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { closeInMongodConnection, rootMongooseTestModule } from '../../../test/utils/mongo-test-module';
+import { closeInMongodConnection, rootMongooseTestModule } from '../../../../test/utils/mongo-test-module';
 import { CreateEventDto, UpdateEventDto } from '../dtos';
-import { fakerRegistry } from '../factory/event.factory';
+import { fakerIp, fakerRegistry } from '../factory/event.factory';
 import { EventSchema } from '../schema/event.schema';
 import { EventService } from './event.service';
 
@@ -10,6 +10,7 @@ describe('EventService', () => {
 
   let service: EventService;
   let mockRegistry: CreateEventDto;
+  let mockIp: string;
 
   const mockRepository = {
     create: jest.fn(),
@@ -18,6 +19,7 @@ describe('EventService', () => {
     find: jest.fn(),
     findAll: jest.fn(),
     findById: jest.fn(),
+    findByEmail: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
@@ -34,6 +36,7 @@ describe('EventService', () => {
 
     service = module.get<EventService>(EventService);
     mockRegistry = fakerRegistry()
+    mockIp = fakerIp()
   });
 
   beforeEach(() => {
@@ -42,6 +45,7 @@ describe('EventService', () => {
     mockRepository.search.mockReset();
     mockRepository.find.mockReset();
     mockRepository.findOne.mockReset();
+    mockRepository.findByEmail.mockReset();
     mockRepository.update.mockReset();
     mockRepository.delete.mockReset();
   });
@@ -56,9 +60,10 @@ describe('EventService', () => {
 
   describe('when create Event', () => {
     it('should create a Event', async () => {
-      mockRepository.create.mockReturnValueOnce(mockRegistry);
+      const ip = mockIp;
+      mockRepository.create.mockReturnValueOnce({...mockRegistry, ip});
 
-      const event: CreateEventDto = mockRegistry;
+      const event: CreateEventDto = {...mockRegistry, ip};
 
       const savedEvent = await service.create(event);
 
@@ -72,7 +77,7 @@ describe('EventService', () => {
     it('should list all Event', async () => {
       mockRepository.find.mockReturnValue([{test: 'asd'}]);
 
-      const event = await service.findAll();
+      const event = await service.search({});
 
       expect(event).toBe(undefined);
       expect(mockRepository.find).toBeCalledTimes(0);
@@ -97,7 +102,8 @@ describe('EventService', () => {
 
   describe('when update a Event', () => {
     it('should update a existing Event', async () => {
-      const EventUpdate: UpdateEventDto = mockRegistry;
+      const ip = mockIp;
+      const EventUpdate: UpdateEventDto = {...mockRegistry, ip};
       EventUpdate.name = 'Update Event '
 
       mockRepository.update.mockReturnValue({

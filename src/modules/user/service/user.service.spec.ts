@@ -1,6 +1,6 @@
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { closeInMongodConnection, rootMongooseTestModule } from '../../../test/utils/mongo-test-module';
+import { closeInMongodConnection, rootMongooseTestModule } from '../../../../test/utils/mongo-test-module';
 import { CreateUserDto, UpdateUserDto } from '../dtos';
 import { fakerRegistry } from '../factory/user.factory';
 import { UserSchema } from '../schema/user.schema';

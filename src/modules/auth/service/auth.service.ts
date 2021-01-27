@@ -14,6 +14,7 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     const userData = await this.usersService.findByEmail(email);
+
     if (!userData) {
       throw new NotFoundException('User not found');    
     }
@@ -24,7 +25,7 @@ export class AuthService {
     }
 
     const { password, ...user } = userData;
-    return {user}
+    return user
 
   }
 
@@ -37,8 +38,8 @@ export class AuthService {
     }
   } 
 
-  async login({rg, password}) {
-    const user = await this.validateUser(rg, password)
+  async login({email, password}) {
+    const user = await this.validateUser(email, password)
     const token = this._createToken(user)
     return { token, user }
   }

@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
 import {
@@ -18,8 +19,9 @@ import {
   ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../common/guards/jwt.guard';
-import { ErrorResponse } from '../../common/responses';
+import { hash } from 'bcrypt';
+import { JwtAuthGuard } from '../../../common/guards/jwt.guard';
+import { ErrorResponse } from '../../../common/responses';
 import { CreateUserDto } from '../dtos/create.dto';
 import { UpdateUserDto } from '../dtos/update.dto';
 import { User } from '../schema/user.schema';
@@ -34,7 +36,7 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Search all User' })
   @ApiOkResponse({ type: [CreateUserDto], description: 'The found User' })
   async findAll(): Promise<User[]> {
@@ -53,11 +55,16 @@ export class UserController {
 
   @Post()
   @HttpCode(201)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create a new User' })
   @ApiCreatedResponse({ type: UpdateUserDto, description: 'Created User' })
   @ApiBadRequestResponse({ type: ErrorResponse, description: 'Bad Request', })
   async create(@Body() data: CreateUserDto): Promise<User> {
+    const userExists = await this.service.findByEmail(data.email);
+    if (userExists) {
+      throw new UnauthorizedException('User exists')
+    }
+    data.password = await hash(data.password, 10);
     return await this.service.create(data);
   }
 
@@ -86,7 +93,7 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(204)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete a User' })
   @ApiNoContentResponse({ description: 'Deleted User' })
   @ApiNotFoundResponse({ type: ErrorResponse, description: 'Not Found' })

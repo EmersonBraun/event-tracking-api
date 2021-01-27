@@ -2,8 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UpdateEventDto } from '../dtos';
-import { CreateEventDto } from '../dtos/create.dto';
-// import { UpdateEventDto } from '../dtos/update.dto';
 import { Event, EventDocument } from '../schema/event.schema';
 
 @Injectable()
@@ -13,12 +11,8 @@ export class EventService {
     private repository: Model<EventDocument>,
   ) {}
 
-  async findAll(): Promise<Event[]> {
-    return await this.repository.find().exec()
-  }
-
-  async search(data: CreateEventDto): Promise<Event[]> {
-    return await this.repository.find({ ...data });
+  async search(data: any): Promise<Event[]> {
+    return await this.repository.find({ ...data }).exec()
   }
 
   async create(data: any): Promise<Event> {

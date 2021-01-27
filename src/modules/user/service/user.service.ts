@@ -22,7 +22,7 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<User> {
-    return await this.repository.findOne({ email }).exec();
+    return await this.repository.findOne({ email }).lean();
   }
 
   async create(data: any): Promise<User> {

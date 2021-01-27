@@ -5,8 +5,9 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { setupDocumentation } from './config/documentation.config';
+import { appName, documentationRoute, port } from './config/main.config';
+import userSeed from './modules/user/seed/user.seed';
 
-const documentationRoute = 'documentation'
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {});
 
@@ -18,11 +19,11 @@ async function bootstrap() {
     }),
   )
   app.useGlobalPipes(new ValidationPipe({ transform: true,})); 
- 
+  await userSeed()
   void setupDocumentation(app, 'documentation')
-  const appName = process.env.APP_NAME ?? 'Event Tracking'
-  const port = process.env.APP_PORT ?? 3333
-  await app.listen(port);
+  app.set('trust proxy', true)
+  await app.listen(port)
+
   console.log(`🚀 ${String(appName)} \n (API) is running on: http://localhost:${String(port)} \n (DOCUMENTATION) is running on: http://localhost:${String(port)}/${String(documentationRoute)}`);
 }
 bootstrap();

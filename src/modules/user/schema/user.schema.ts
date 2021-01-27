@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+// import autopopulate from 'mongoose-autopopulate';
 
 export type UserDocument = User & Document; 
 
@@ -10,14 +11,4 @@ export class User {
   @Prop() password: string
 }
 export const UserSchema = SchemaFactory.createForClass(User)
-
-// UserSchema.pre<Document<User>>('save', (next) => {
-//   try {
-//     this.password = bcrypt.hash(this.password, 10);  
-//     next(); 
-//   } catch (error) {
-//     return next(error);
-//   }
-// });
-
   

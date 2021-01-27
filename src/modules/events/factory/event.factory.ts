@@ -7,6 +7,7 @@ export const fakerRegistry = ():CreateEventDto => {
   return {
     name: faker.random.arrayElement(['Focus', 'Mouse']),
     type: faker.random.arrayElement(events),
-    ip: faker.internet.ip()
   }
 }
+
+export const fakerIp = () => Faker.internet.ip()

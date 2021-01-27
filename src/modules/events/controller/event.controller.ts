@@ -5,6 +5,7 @@ import {
   HttpCode,
   Param,
   Post,
+  Query,
   UseGuards
 } from '@nestjs/common';
 import {
@@ -13,10 +14,12 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../common/guards/jwt.guard';
-import { ErrorResponse } from '../../common/responses';
+import { IP } from '../../../common/decorators/Ip.decorator';
+import { JwtAuthGuard } from '../../../common/guards/jwt.guard';
+import { ErrorResponse } from '../../../common/responses';
 import { CreateEventDto } from '../dtos';
 import { UpdateEventDto } from '../dtos/update.dto';
 import { Event } from '../schema/event.schema';
@@ -31,10 +34,13 @@ export class EventController {
   @Get()
   @HttpCode(200)
   @UseGuards(JwtAuthGuard) 
-  @ApiOperation({ summary: 'Search all Event' })
+  @ApiOperation({ summary: 'List all Event ou filtered by querystring' })
+  @ApiQuery({ name: 'name', example: 'test', required: false})
+  @ApiQuery({ name: 'type', example: 'test', required: false})
+  @ApiQuery({ name: 'ip', example: '127.0.0.1', required: false})
   @ApiOkResponse({ type: [CreateEventDto], description: 'The found Event' })
-  async findAll(): Promise<Event[]> {
-    return await this.service.findAll();
+  async findAll(@Query() query?): Promise<Event[]> {
+    return await this.service.search(query);
   }
 
   @Post()
@@ -43,8 +49,8 @@ export class EventController {
   @ApiOperation({ summary: 'Create a new Event' })
   @ApiCreatedResponse({ type: CreateEventDto, description: 'Created Event' }) 
   @ApiBadRequestResponse({ type: ErrorResponse, description: 'Bad Request', })
-  async create(@Body() data: CreateEventDto): Promise<Event> {
-    return await this.service.create(data);
+  async create(@Body() data: CreateEventDto, @IP() ip: any): Promise<Event> {
+    return await this.service.create({...data, ip });
   }
 
 

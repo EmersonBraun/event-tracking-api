@@ -14,6 +14,7 @@ describe('UserController', () => {
     findAll: jest.fn(),
     search: jest.fn(),
     findById: jest.fn(),
+    findByEmail: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
   };
@@ -34,6 +35,7 @@ describe('UserController', () => {
     mockService.findAll.mockReset();
     mockService.search.mockReset();
     mockService.findById.mockReset();
+    mockService.findByEmail.mockReset();
     mockService.update.mockReset();
     mockService.delete.mockReset();
   });
