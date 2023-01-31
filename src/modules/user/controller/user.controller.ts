@@ -36,21 +36,11 @@ export class UserController {
 
   @Get()
   @HttpCode(200)
-  // @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Search all User' })
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'List all User' })
   @ApiOkResponse({ type: [CreateUserDto], description: 'The found User' })
   async findAll(): Promise<User[]> {
     return await this.service.findAll();
-  }
-
-  @Post('search')
-  @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Search User' })
-  @ApiCreatedResponse({ type: UpdateUserDto, description: 'Searched User' })
-  @ApiBadRequestResponse({ type: ErrorResponse, description: 'Bad Request', })
-  async search(@Body() data: CreateUserDto): Promise<User[]> {
-    return await this.service.search(data);
   }
 
   @Post()
@@ -93,7 +83,7 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(204)
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Delete a User' })
   @ApiNoContentResponse({ description: 'Deleted User' })
   @ApiNotFoundResponse({ type: ErrorResponse, description: 'Not Found' })
