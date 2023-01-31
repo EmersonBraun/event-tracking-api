@@ -1,6 +1,11 @@
 # Event tracking
 API to track events
 
+<a href='https://github.com/shivamkapasia0' target="_blank"><img alt='node.js' src='https://img.shields.io/badge/node.js-100000?style=for-the-badge&logo=node.js&logoColor=white&labelColor=black&color=black'/></a>
+<a href='https://github.com/shivamkapasia0' target="_blank"><img alt='nestjs' src='https://img.shields.io/badge/nestjs-100000?style=for-the-badge&logo=nestjs&logoColor=white&labelColor=black&color=black'/></a>
+<a href='https://github.com/shivamkapasia0' target="_blank"><img alt='docker' src='https://img.shields.io/badge/docker-100000?style=for-the-badge&logo=docker&logoColor=white&labelColor=black&color=black'/></a>
+<a href='https://github.com/shivamkapasia0' target="_blank"><img alt='swagger' src='https://img.shields.io/badge/swagger-100000?style=for-the-badge&logo=swagger&logoColor=white&labelColor=black&color=black'/></a>
+
 ### Prerequisites
 
 * [NPM](https://www.npmjs.com/)
