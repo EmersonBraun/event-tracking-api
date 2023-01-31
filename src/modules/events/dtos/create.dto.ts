@@ -4,7 +4,7 @@ import {
   IsString,
   IsIn
 } from 'class-validator';
-export const EVENTS = ['focus', 'blur', 'focusin', 'focusout', 'auxclick', 'click', 'contextmenu', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseover', 'mouseout', 'mouseup', 'pointerlockchange', 'pointerlockerror', 'select', 'wheel']
+const EVENTS = ['focus', 'blur', 'focusin', 'focusout', 'auxclick', 'click', 'contextmenu', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseover', 'mouseout', 'mouseup', 'pointerlockchange', 'pointerlockerror', 'select', 'wheel']
 
 export class CreateEventDto {
   @IsString() @ApiProperty() name: string
