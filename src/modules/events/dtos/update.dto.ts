@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString } from 'class-validator';
-import { EVENTS } from 'src/config/events';
+export const EVENTS = ['focus', 'blur', 'focusin', 'focusout', 'auxclick', 'click', 'contextmenu', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseover', 'mouseout', 'mouseup', 'pointerlockchange', 'pointerlockerror', 'select', 'wheel']
 
 export class UpdateEventDto {
   @IsString() @ApiProperty() name: string
