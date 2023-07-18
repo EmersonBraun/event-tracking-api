@@ -40,7 +40,7 @@
     "class-validator": "^0.14.0",
     "express-rate-limit": "^0.0.0-typescript-beta-7",
     "helmet": "^4.1.1",
-    "mongoose": "^5.13.15",
+    "mongoose": "^5.13.20",
     "mongoose-autopopulate": "^0.12.3",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
